@@ -2,6 +2,7 @@ import express from 'express'
 import logger from './middlewares/logger.js';
 import router from './router/router.js';
 import cors from 'cors';
+import { connectToDb } from './DB/dbService.js';
 
 const app = express();
 const port = 3000;
@@ -23,4 +24,5 @@ app.get('/ping', (req, res) => {
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
+	connectToDb();
 });

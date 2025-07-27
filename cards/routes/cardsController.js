@@ -1,4 +1,6 @@
 import express from 'express'
+import Card from '../models/Card.js';
+
 
 const router = express.Router()
 
@@ -15,16 +17,25 @@ router.get('/', (req, res) => {
 });
 
 //create
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
+	try {
+		const newCard = {
+			id: cards.length + 1,
+			...req.body
+		};
 
-	const newCard = {
-		id: cards.length + 1,
-		...req.body
-	};
-	cards.push(newCard)
-	res.status(201).send('New Card added succesfully')
+		// Save in-memory
+		cards.push(newCard);
 
+		// Save to MongoDB
+		const newCardForMongo = new Card(newCard);
+		await newCardForMongo.save();
 
+		res.status(201).send('New Card added successfully');
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Error saving card to database');
+	}
 });
 
 router.post("/like", (req, res) => {
