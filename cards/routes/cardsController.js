@@ -12,8 +12,9 @@ let cards = [
 
 
 //read
-router.get('/', (req, res) => {
-	res.send(cards)
+router.get('/', async (req, res) => {
+	const cardFromDb = await Card.find();
+	res.send(cardFromDb);
 });
 
 //create
@@ -63,16 +64,20 @@ router.post("/like", (req, res) => {
 
 
 //get one by id
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
 	const { id } = req.params;
-	const card = cards.find((c) => c.id.toString() === id)
-	if (card) {
-		res.send(card)
-
-	} else {
-		res.status(404).send('Card not found')
+	try {
+		const cardFromDb = await Card.findById(id); // Finds by MongoDB _id
+		if (!cardFromDb) {
+			return res.status(404).send('Card not found');
+		}
+		res.send(cardFromDb);
+	} catch (err) {
+		console.error('Error fetching card by ID:', err);
+		res.status(500).send('Server error');
 	}
 });
+
 
 
 //update
