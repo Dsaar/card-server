@@ -66,15 +66,12 @@ router.post("/like", (req, res) => {
 //get one by id
 router.get('/:id', async (req, res) => {
 	const { id } = req.params;
-	try {
-		const cardFromDb = await Card.findById(id); // Finds by MongoDB _id
-		if (!cardFromDb) {
-			return res.status(404).send('Card not found');
-		}
-		res.send(cardFromDb);
-	} catch (err) {
-		console.error('Error fetching card by ID:', err);
-		res.status(500).send('Server error');
+	const cardFromDb = await Card.findById(id);
+	if (cardFromDb) {
+		res.send(cardFromDb)
+
+	} else {
+		res.status(404).send('Card not found')
 	}
 });
 
