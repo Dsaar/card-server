@@ -1,6 +1,6 @@
 import express from 'express'
 import Card from '../models/Card.js';
-import { creatNewCard } from '../services/cardsService.js';
+import { creatNewCard, deleteCard, getAllCards, getCardById, updateCard } from '../services/cardsService.js';
 
 
 const router = express.Router()
@@ -13,9 +13,13 @@ let cards = [
 
 
 //read
-router.get('/', async (req, res) => {
-	const cardFromDb = await Card.find();
-	res.send(cardFromDb);
+router.get("/", async (req, res) => {
+	const allCards = await getAllCards();
+	if (allCards) {
+		res.send(allCards);
+	} else {
+		res.status(500).send("something went wrong with get all cards");
+	}
 });
 
 //create
@@ -56,9 +60,9 @@ router.post("/like", (req, res) => {
 //get one by id
 router.get('/:id', async (req, res) => {
 	const { id } = req.params;
-	const cardFromDb = await Card.findById(id);
-	if (cardFromDb) {
-		res.send(cardFromDb)
+	const card = await getCardById(id);
+	if (card) {
+		res.send(card)
 
 	} else {
 		res.status(404).send('Card not found')
@@ -68,34 +72,27 @@ router.get('/:id', async (req, res) => {
 
 
 //update
-router.put("/:id", (req, res) => {
-
+router.put("/:id", async (req, res) => {
 	const { id } = req.params;
-
 	const newCard = req.body;
-
-
-	const cardToReplaceIndex = cards.findIndex(
-
-		(card) => card.id.toString() === id
-
-	);
-
-	if (cardToReplaceIndex !== -1) {
-
-		cards[cardToReplaceIndex] = newCard;
-
+	const modifiedCard = await updateCard(id, newCard);
+	if (modifiedCard) {
+		res.send(modifiedCard);
+	} else {
+		res.status(400).send("something went wrong with card edit");
 	}
-
-	res.send(cards);
-
 });
 
 //delete
-router.delete('/:id', (req, res) => {
+router.delete("/:id", async (req, res) => {
 	const { id } = req.params;
-	cards = cards.filter((card) => card.id.toString() !== id)
-	res.send(cards)
+	const idOfDeletedCard = await deleteCard(id);
+	if (idOfDeletedCard) {
+		res.send("Card deleted successfully");
+	} else {
+		res.status(400).send("something went wrong with card delete");
+	}
 });
+
 
 export default router
