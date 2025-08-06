@@ -29,3 +29,12 @@ export const PHONE = {
 	required: true,
 	match: RegExp(/0[0-9]{1,2}\-?\s?[0-9]{3}\s?[0-9]{4}/),
 };
+
+export const PASSWORD = {
+	type: String,
+	required: true,
+	trim:true,
+	match: RegExp(
+		/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&])[A-Za-z\d!@#$%^&]{9,}$/
+	),
+};
