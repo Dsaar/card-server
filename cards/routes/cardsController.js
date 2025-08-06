@@ -1,6 +1,7 @@
 import express from 'express'
 import Card from '../models/Card.js';
 import { creatNewCard, deleteCard, getAllCards, getCardById, updateCard } from '../services/cardsService.js';
+import { auth } from '../../auth/services/authService.js';
 
 
 const router = express.Router()
@@ -23,7 +24,7 @@ router.get("/", async (req, res) => {
 });
 
 //create
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
 	const newCard = req.body;
 	const cardResult = await creatNewCard(newCard);
 	if (cardResult) {

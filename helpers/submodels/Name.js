@@ -5,7 +5,8 @@ export const Name = new Schema({
 	first: DEFAULT_VALIDATION,
 	middle: {
 		...DEFAULT_VALIDATION,
-		require: false,
+		minLength: 0,
+		required: false,
 	},
 	last: DEFAULT_VALIDATION,
 });
