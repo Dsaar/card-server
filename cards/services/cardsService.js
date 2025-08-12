@@ -5,7 +5,7 @@ import { createCardInDb, deleteCardInDb, getAllCardsFromDb, getCardByIdFromDb, u
 export const getAllCards = async () => {
 	const cards = await getAllCardsFromDb();
 	return cards;
-}
+};
 
 //get one by id
 export const getCardById = async (id) => {
@@ -14,18 +14,19 @@ export const getCardById = async (id) => {
 };
 
 //create
-export const creatNewCard = async (card) => {
+export const creatNewCard = async (card, userId) => {
 	//generate biznumnber for the card
 	//it will look like this
 	//card.bizNumber=generateBiznumber()
+	card.user_id = userId;
 	const newCard = await createCardInDb(card);
 	return newCard;
-}
+};
 //update
 export const updateCard = async (id, newCard) => {
 	const modifiedCard = await updateCardInDb(id, newCard);
 	return modifiedCard;
-}
+};
 //delete
 export const deleteCard = async (id) => {
 	const idOfDeletedCard = await deleteCardInDb(id);

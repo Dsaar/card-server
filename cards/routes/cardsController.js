@@ -2,15 +2,10 @@ import express from 'express'
 import Card from '../models/Card.js';
 import { creatNewCard, deleteCard, getAllCards, getCardById, updateCard } from '../services/cardsService.js';
 import { auth } from '../../auth/services/authService.js';
+import { getCardByIdFromDb } from '../services/cardsDataService.js';
 
 
 const router = express.Router()
-
-let cards = [
-	{ id: 1, title: 'card1', subtitle: 'sub card1', likes: [] },
-	{ id: 2, title: 'card2', subtitle: 'sub card2', likes: [] },
-	{ id: 3, title: 'card3', subtitle: 'sub card3', likes: [] },
-];
 
 
 //read
@@ -26,7 +21,14 @@ router.get("/", async (req, res) => {
 //create
 router.post("/", auth, async (req, res) => {
 	const newCard = req.body;
-	const cardResult = await creatNewCard(newCard);
+	const user = req.user
+
+	if (!user.isBusiness) {
+		return res.status(403).send("Only Business user can create cards");
+	}
+
+	const cardResult = await creatNewCard(newCard, user._id);
+	
 	if (cardResult) {
 		res.status(201).send("New card added successfully");
 	} else {
@@ -73,7 +75,7 @@ router.get('/:id', async (req, res) => {
 
 
 //update
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
 	const { id } = req.params;
 	const newCard = req.body;
 	const modifiedCard = await updateCard(id, newCard);
@@ -85,8 +87,15 @@ router.put("/:id", async (req, res) => {
 });
 
 //delete
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
 	const { id } = req.params;
+	const user = req.user
+	const card = await getCardByIdFromDb(id)
+
+	if (!user.isAdmin && card.user_id !== user._id) {
+		return res.status(403).send("Only Admin user or owner of card can delete it")
+	}
+
 	const idOfDeletedCard = await deleteCard(id);
 	if (idOfDeletedCard) {
 		res.send("Card deleted successfully");
