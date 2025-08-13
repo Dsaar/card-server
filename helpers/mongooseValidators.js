@@ -21,7 +21,7 @@ export const EMAIL = {
 	match: RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/),
 	lowercase: true,
 	trim: true,
-	unique: false,
+	unique: true,
 };
 
 export const PHONE = {

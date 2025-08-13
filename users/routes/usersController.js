@@ -1,12 +1,12 @@
 import express from 'express'
-import { creatNewUser, login } from '../services/usersService.js'
+import { createNewUser, login } from '../services/usersService.js'
 
 const router = express.Router()
 
 //sign up
 router.post("/", async (req, res) => {
 	const newUser = req.body
-	const user = await creatNewUser(newUser)
+	const user = await createNewUser(newUser)
 	if (user) {
 		res.status(201).send(user)
 	} else {
