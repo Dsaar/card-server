@@ -1,3 +1,4 @@
+import { validateCard } from "../validation/cardValidationService.js";
 import { createCardInDb, deleteCardInDb, getAllCardsFromDb, getCardByIdFromDb, updateCardInDb } from "./cardsDataService.js"
 
 
@@ -19,6 +20,11 @@ export const creatNewCard = async (card, userId) => {
 	//it will look like this
 	//card.bizNumber=generateBiznumber()
 	card.user_id = userId;
+	const { error } = validateCard(card)
+	if (error) {
+		console.log(error.details[0].message)
+		return null
+	}
 	const newCard = await createCardInDb(card);
 	return newCard;
 };
