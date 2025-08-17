@@ -31,9 +31,24 @@ export const createUser = async (user) => {
 		return userForDb;
 	} catch (error) {
 		console.log(error);
-		return null;
+
+		// 1️⃣ Duplicate key (email already used)
+		if (error.code === 11000 && error.keyPattern?.email) {
+			throw new Error("Email is already in use. Please choose another one.");
+		}
+
+		// 2️⃣ Validation error (info not good / schema rules violated)
+		if (error.name === "ValidationError") {
+			const messages = Object.values(error.errors).map((e) => e.message);
+			throw new Error(`Validation failed: ${messages.join(", ")}`);
+		}
+
+
+		// 3️⃣ Any other MongoDB / network issue
+		throw new Error("MongoDb - Error in creating new user");
 	}
 };
+
 
 //update -> gets id and new card and return new card
 export const updateUserInDb = async (id, newUser) => {

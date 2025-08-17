@@ -31,6 +31,11 @@ export const creatNewCard = async (card, userId) => {
 //update
 export const updateCard = async (id, newCard) => {
 	const modifiedCard = await updateCardInDb(id, newCard);
+	const { error } = validateCard(newCard)
+	if (error) {
+		console.log(error.details[0].message)
+		return null
+	}
 	return modifiedCard;
 };
 //delete

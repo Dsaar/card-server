@@ -5,12 +5,12 @@ const router = express.Router()
 
 //sign up
 router.post("/", async (req, res) => {
-	const newUser = req.body
-	const user = await createNewUser(newUser)
-	if (user) {
-		res.status(201).send(user)
-	} else {
-		res.status(400).send("something went wrong with registration")
+	try {
+		const newUser = req.body;
+		const user = await createNewUser(newUser);
+		res.status(201).send(user);
+	} catch (error) {
+		res.status(400).send(error.message);
 	}
 });
 

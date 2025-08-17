@@ -18,11 +18,18 @@ app.use(express.json());
 app.use(logger);
 
 app.use(express.static("./public"));
-app.use(router);
 
 
 app.get('/ping', (req, res) => {
 	res.send('pong')
+});
+
+app.use(router);
+
+
+app.use((error, req, res, next) => {
+	console.log(error);
+	res.status(500).send("Server Internal Error");
 });
 
 app.listen(port, () => {
