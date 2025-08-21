@@ -17,11 +17,11 @@ router.post("/", async (req, res) => {
 
 //log in
 router.post("/login", async (req, res) => {
-	const { password, email } = req.body;
-	const token = await login(email, password);
-	if (token) {
+	try {
+		const { password, email } = req.body;
+		const token = await login(email, password);
 		res.send(token);
-	} else {
+	} catch (error) {
 		res.status(401).send("invalid email or password");
 	}
 });

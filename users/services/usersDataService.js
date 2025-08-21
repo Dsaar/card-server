@@ -78,9 +78,12 @@ export const deleteUserInDb = async (id) => {
 export const getUserByEmail = async (email) => {
 	try {
 		const user = await User.findOne({ email });
+		if (!user) {
+			throw new Error("Email not found");
+		}
 		return user;
 	} catch (error) {
 		console.log(error);
-		return null;
+		throw new Error(error.message);
 	}
 };
