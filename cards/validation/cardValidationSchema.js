@@ -44,7 +44,6 @@ const cardSchema = Joi.object({
 			zip: Joi.number(),
 		})
 		.required(),
-
 	bizNumber: Joi.number().allow(""),
 	user_id: Joi.string().allow(""),
 });

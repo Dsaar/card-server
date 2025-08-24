@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { generateToken } from "../../auth/providers/jwtProvider.js";
 import { comparePassword, generatePassword } from "../helpers/bcrypt.js";
-import { createUser, getUserByEmail } from "./usersDataService.js";
+import { createUser, getUserByEmail, updateUserInDb } from "./usersDataService.js";
 import { validateUser } from "../validation/userValidationService.js";
 
 
@@ -46,3 +46,27 @@ export const login = async (email, password) => {
 	}
 };
 
+
+
+/** update (self or admin) */
+export const updateUser = async (id, updates, { isAdminCaller }) => {
+	// Never allow client to change _id
+	delete updates._id;
+
+	// Only admins can change isAdmin
+	if (!isAdminCaller) {
+		delete updates.isAdmin;
+	}
+
+	// Hash password if provided
+	if (updates.password) {
+		updates.password = generatePassword(updates.password);
+	}
+
+	// Optionally: whitelist fields to reduce risk
+	// const allowed = ["name","email","phone","image","address","isBusiness","isAdmin","password"];
+	// updates = _.pick(updates, allowed);
+
+	const updated = await updateUserInDb(id, updates);
+	return updated; // already sanitized in data layer
+};

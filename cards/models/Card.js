@@ -26,6 +26,7 @@ const cardSchema = new Schema({
 		maxLength: 7,
 		required: true,
 		trim: true,
+		unique:true,
 	},
 	likes: [String],
 	createdAt: {
@@ -37,6 +38,8 @@ const cardSchema = new Schema({
 		required: true,
 	},
 });
+
+cardSchema.index({ likes: 1 });
 
 const Card = model("card", cardSchema);
 

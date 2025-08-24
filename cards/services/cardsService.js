@@ -1,5 +1,6 @@
+import { generateBizNumber } from "../helpers/generateBizNumber.js";
 import { validateCard } from "../validation/cardValidationService.js";
-import { createCardInDb, deleteCardInDb, getAllCardsFromDb, getCardByIdFromDb, updateCardInDb } from "./cardsDataService.js"
+import { createCardInDb, deleteCardInDb, getAllCardsFromDb, getCardByIdFromDb, getLikedCardsFromDb, toggleLikeInDb, updateCardInDb } from "./cardsDataService.js"
 
 
 //get all
@@ -18,7 +19,7 @@ export const getCardById = async (id) => {
 export const creatNewCard = async (card, userId) => {
 	//generate biznumnber for the card
 	//it will look like this
-	//card.bizNumber=generateBiznumber()
+	card.bizNumber = await generateBizNumber()
 	card.user_id = userId;
 	const { error } = validateCard(card)
 	if (error) {
@@ -45,6 +46,14 @@ export const deleteCard = async (id) => {
 };
 
 //toggleLike
+// liked cards (current user)
+export const getLikedCards = async (userId) => {
+	return await getLikedCardsFromDb(userId);
+};
 
+// like/unlike toggle
+export const toggleLike = async (cardId, userId) => {
+	return await toggleLikeInDb(cardId, userId);
+};
 
 //changeBizNumber

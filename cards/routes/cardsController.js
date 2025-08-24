@@ -1,21 +1,21 @@
 import express from 'express'
 import Card from '../models/Card.js';
-import { creatNewCard, deleteCard, getAllCards, getCardById, updateCard } from '../services/cardsService.js';
+import { creatNewCard, deleteCard, getAllCards, getCardById, getLikedCards, toggleLike, updateCard } from '../services/cardsService.js';
 import { auth } from '../../auth/services/authService.js';
 import { getCardByIdFromDb } from '../services/cardsDataService.js';
+import mongoose from 'mongoose';
 
 
 const router = express.Router()
 
 
 //read
-router.get("/", async (req, res) => {
+router.get("/", async (_req, res) => {
 	const allCards = await getAllCards();
-	if (allCards) {
-		res.send(allCards);
-	} else {
-		res.status(500).send("something went wrong with get all cards");
-	}
+	console.log("GET /cards ->", allCards?.length ?? 0);
+	return allCards
+		? res.send(allCards)
+		: res.status(500).send("something went wrong with get all cards");
 });
 
 //create
@@ -36,29 +36,43 @@ router.post("/", auth, async (req, res) => {
 	}
 });
 
-router.post("/like", (req, res) => {
-	const { cardId, userId } = req.query;
-	const cardIdNumber = Number(cardId); // convert from string
 
-	if (!cardIdNumber || !userId) {
-		return res.status(400).send("cardId and userId are required");
-	}
-
-	const card = cards.find(card => card.id === cardIdNumber);
-
-	if (!card) {
-		return res.status(404).send(`Card with id ${cardId} not found`);
-	}
-
-	if (card.likes.includes(userId)) {
-		return res.status(409).send("User already liked this card");
-	}
-
-	card.likes.push(userId);
-	res.send(`User ${userId} liked card ${cardId}`);
+//my cards
+router.get("/my-cards", auth, async (req, res) => {
+	const mine = await Card.find({ user_id: req.user._id });
+	res.send(mine || []);
 });
 
+// LIKED CARDS (current user)
+router.get("/liked", auth, async (req, res) => {
+	const liked = await getLikedCards(req.user._id);
+	res.send(liked || []);
+});
 
+// LIKE/UNLIKE (new-style): PATCH /cards/:id/like -> meta response
+router.patch("/:id/like", auth, async (req, res) => {
+	const { id } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res.status(400).send("Invalid card id");
+	}
+	const card = await toggleLike(id, req.user._id);
+	if (!card) return res.status(404).send("Card not found");
+
+	const liked = card.likes.includes(req.user._id);
+	res.send({ cardId: card._id, liked, likesCount: card.likes.length });
+});
+
+// ✅ BACK-COMPAT for your existing frontend:
+// PATCH /cards/:id -> toggle like and return the FULL updated card
+router.patch("/:id", auth, async (req, res) => {
+	const { id } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res.status(400).send("Invalid card id");
+	}
+	const card = await toggleLike(id, req.user._id);
+	if (!card) return res.status(404).send("Card not found");
+	res.send(card);
+});
 
 //get one by id
 router.get('/:id', async (req, res) => {
@@ -103,6 +117,8 @@ router.delete("/:id", auth, async (req, res) => {
 		res.status(400).send("something went wrong with card delete");
 	}
 });
+
+
 
 
 export default router

@@ -64,3 +64,46 @@ export const deleteCardInDb = async (id) => {
 	}
 
 }
+
+//get card by biz number
+export const getCardByBizNumber = async (bizNumber) => {
+	try {
+		const card = await Card.findOne({ bizNumber });
+		return card;
+	} catch (error) {
+		console.log(error);
+		return null;
+	}
+};
+
+// ===== LIKES =====
+
+// list of cards liked by this user
+export const getLikedCardsFromDb = async (userId) => {
+	try {
+		return await Card.find({ likes: userId });
+	} catch (error) {
+		console.log(error);
+		return null;
+	}
+};
+
+// toggle like/unlike (simple, compatible)
+export const toggleLikeInDb = async (cardId, userId) => {
+	try {
+		const card = await Card.findById(cardId);
+		if (!card) return null;
+
+		const i = card.likes.indexOf(userId);
+		if (i === -1) {
+			card.likes.push(userId); // like
+		} else {
+			card.likes.splice(i, 1); // unlike
+		}
+		await card.save();
+		return card;
+	} catch (error) {
+		console.log(error);
+		return null;
+	}
+};
