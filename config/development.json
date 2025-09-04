@@ -1,0 +1,5 @@
+{
+	"TOKEN_GENERATOR": "jwt",
+	"LOGGER": "morgan",
+	"VALIDATOR": "joi"
+}

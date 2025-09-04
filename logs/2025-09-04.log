@@ -1,0 +1,10 @@
+[2025/9/04 20:58:32] status=403 msg=Forbidden
+[2025/9/04 20:59:33] status=403 msg=Forbidden
+[2025/9/04 20:59:42] status=401 msg=Authentication Error: Please Login
+[2025/9/04 21:02:08] status=401 msg=invalid email or password
+[2025/9/04 21:06:17] status=401 msg=Authentication Error: Please Login
+[2025/9/04 21:07:06] status=409 msg=bizNumber is already in use
+[2025/9/04 21:16:56] status=409 msg=bizNumber is already in use
+[2025/9/04 21:18:25] status=404 msg=Path not found
+[2025/9/04 21:20:04] status=404 msg=Path not found
+[2025/9/04 21:23:45] status=404 msg=Path not found

@@ -1,6 +1,6 @@
 import { generateBizNumber } from "../helpers/generateBizNumber.js";
 import { validateCard } from "../validation/cardValidationService.js";
-import { createCardInDb, deleteCardInDb, getAllCardsFromDb, getCardByIdFromDb, getLikedCardsFromDb, toggleLikeInDb, updateCardInDb } from "./cardsDataService.js"
+import { changeBizNumberInDb, createCardInDb, deleteCardInDb, getAllCardsFromDb, getCardByBizNumber, getCardByIdFromDb, getLikedCardsFromDb, toggleLikeInDb, updateCardInDb } from "./cardsDataService.js"
 
 
 //get all
@@ -57,3 +57,18 @@ export const toggleLike = async (cardId, userId) => {
 };
 
 //changeBizNumber
+export const changeBizNumber = async (id, newBizNumber) => {
+	const existing = await getCardByIdFromDb(id);
+	if (!existing) return null;
+
+	// Try up to 20 times to avoid rare collisions
+	for (let i = 0; i < 20; i++) {
+		const n = await generateBizNumber(); // expected to return 7-digit number
+		if (n === existing.bizNumber) continue;
+		const taken = await getCardByBizNumber(n);
+		if (!taken) {
+			return await changeBizNumberInDb(id, n); // update & return updated doc
+		}
+	}
+	return null; // failed to allocate (extremely unlikely)
+};

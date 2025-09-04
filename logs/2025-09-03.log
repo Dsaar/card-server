@@ -1,3 +1,6 @@
 [2025/9/03 13:52:12] status=400 msg=something went wrong with card edit
 [2025/9/03 13:52:21] status=400 msg=something went wrong with card edit
 [2025/9/03 13:52:22] status=400 msg=something went wrong with card edit
+[2025/9/03 20:50:32] status=400 msg=something went wrong with card edit
+[2025/9/03 20:51:07] status=400 msg=something went wrong with card edit
+[2025/9/03 21:33:07] status=401 msg=invalid email or password

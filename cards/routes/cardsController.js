@@ -1,9 +1,10 @@
 import express from 'express'
 import Card from '../models/Card.js';
-import { creatNewCard, deleteCard, getAllCards, getCardById, getLikedCards, toggleLike, updateCard } from '../services/cardsService.js';
+import { changeBizNumber, creatNewCard, deleteCard, getAllCards, getCardById, getLikedCards, toggleLike, updateCard } from '../services/cardsService.js';
 import { auth } from '../../auth/services/authService.js';
-import { getCardByIdFromDb } from '../services/cardsDataService.js';
+import { getCardByBizNumber, getCardByIdFromDb } from '../services/cardsDataService.js';
 import mongoose from 'mongoose';
+import { requireAdmin } from '../../auth/middlewares/requireAdmin.js';
 
 
 const router = express.Router()
@@ -28,7 +29,7 @@ router.post("/", auth, async (req, res) => {
 	}
 
 	const cardResult = await creatNewCard(newCard, user._id);
-	
+
 	if (cardResult) {
 		res.status(201).send("New card added successfully");
 	} else {
@@ -60,6 +61,28 @@ router.patch("/:id/like", auth, async (req, res) => {
 
 	const liked = card.likes.includes(req.user._id);
 	res.send({ cardId: card._id, liked, likesCount: card.likes.length });
+});
+
+/** ✅ ADMIN: change a card's business number
+ * PATCH /cards/:id/biz-number
+ * body: { bizNumber: 1234567 }
+ */router.patch('/:id/biz-number', auth, requireAdmin, async (req, res) => {
+	const { id } = req.params;
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res.status(400).send('Invalid card id');
+	}
+
+	const updated = await changeBizNumber(id);
+	if (!updated) {
+		// Either card not found or failed to allocate (extremely rare)
+		return res.status(400).send('Failed to update bizNumber');
+	}
+
+	res.send({
+		message: 'Business number updated',
+		cardId: updated._id,
+		bizNumber: updated.bizNumber,
+	});
 });
 
 // ✅ BACK-COMPAT for your existing frontend:

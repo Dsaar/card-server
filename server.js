@@ -4,13 +4,15 @@ import router from './router/router.js';
 import cors from 'cors';
 import { connectToDb } from './DB/dbService.js';
 import chalk from 'chalk';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(cors({
 
-	origin: ["http://127.0.0.1:5500", "http://localhost:5173","https://buiscard-project.vercel.app"],
+	origin: ["http://127.0.0.1:5500", "http://localhost:5173", "https://buiscard-project.vercel.app"],
 
 }));
 

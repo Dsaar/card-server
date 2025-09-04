@@ -107,3 +107,19 @@ export const toggleLikeInDb = async (cardId, userId) => {
 		return null;
 	}
 };
+
+//admin: change bizNumber
+
+export const changeBizNumberInDb = async (id, newBizNumber) => {
+	try {
+		const updated = await Card.findByIdAndUpdate(
+			id,
+			{ bizNumber: newBizNumber },
+			{ new: true }
+		);
+		return updated;
+	} catch (error) {
+		console.log(error);
+		return null;
+	}
+};
