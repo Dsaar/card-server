@@ -2,7 +2,7 @@ import express from 'express'
 import Card from '../models/Card.js';
 import { changeBizNumber, creatNewCard, deleteCard, getAllCards, getCardById, getLikedCards, toggleLike, updateCard } from '../services/cardsService.js';
 import { auth } from '../../auth/services/authService.js';
-import { getCardByBizNumber, getCardByIdFromDb } from '../services/cardsDataService.js';
+import { getCardByIdFromDb } from '../services/cardsDataService.js';
 import mongoose from 'mongoose';
 import { requireAdmin } from '../../auth/middlewares/requireAdmin.js';
 
@@ -65,7 +65,6 @@ router.patch("/:id/like", auth, async (req, res) => {
 
 /** ✅ ADMIN: change a card's business number
  * PATCH /cards/:id/biz-number
- * body: { bizNumber: 1234567 }
  */router.patch('/:id/biz-number', auth, requireAdmin, async (req, res) => {
 	const { id } = req.params;
 	if (!mongoose.Types.ObjectId.isValid(id)) {

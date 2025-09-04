@@ -57,7 +57,7 @@ export const toggleLike = async (cardId, userId) => {
 };
 
 //changeBizNumber
-export const changeBizNumber = async (id, newBizNumber) => {
+export const changeBizNumber = async (id) => {
 	const existing = await getCardByIdFromDb(id);
 	if (!existing) return null;
 
@@ -65,7 +65,7 @@ export const changeBizNumber = async (id, newBizNumber) => {
 	for (let i = 0; i < 20; i++) {
 		const n = await generateBizNumber(); // expected to return 7-digit number
 		if (n === existing.bizNumber) continue;
-		const taken = await getCardByBizNumber(n);
+		const taken = await getCardByBizNumber(n);//checks if unique at top level
 		if (!taken) {
 			return await changeBizNumberInDb(id, n); // update & return updated doc
 		}
