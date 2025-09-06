@@ -1,0 +1,16 @@
+[2025/9/06 23:05:08] status=401 msg=invalid email or password
+[2025/9/06 23:06:18] status=404 msg=Path not found
+[2025/9/06 23:06:30] status=404 msg=Path not found
+[2025/9/06 23:07:16] status=403 msg=Admins only
+[2025/9/06 23:17:09] status=404 msg=User not found
+[2025/9/06 23:18:16] status=404 msg=User not found
+[2025/9/06 23:18:47] status=404 msg=User not found
+[2025/9/06 23:20:11] status=401 msg=Authentication Error: Please Login
+[2025/9/06 23:23:14] status=401 msg=invalid email or password
+[2025/9/06 23:23:22] status=401 msg=invalid email or password
+[2025/9/06 23:23:25] status=401 msg=invalid email or password
+[2025/9/06 23:23:27] status=401 msg=invalid email or password
+[2025/9/06 23:29:07] status=401 msg=invalid email or password
+[2025/9/06 23:29:22] status=401 msg=invalid email or password
+[2025/9/06 23:29:24] status=423 msg=Account locked for 24 hours due to multiple failed logins.
+[2025/9/06 23:29:34] status=423 msg=Account locked. Try again after 2025-09-07T20:29:24.475Z

@@ -4,6 +4,8 @@ import { comparePassword, generatePassword } from "../helpers/bcrypt.js";
 import { createUser, getUserByEmail, updateUserInDb } from "./usersDataService.js";
 import { validateUser } from "../validation/userValidationService.js";
 
+const MAX_LOGIN_ATTEMPTS = 3;
+const LOCK_TIME_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 //create
 export const createNewUser = async (user) => {
@@ -33,15 +35,59 @@ export const createNewUser = async (user) => {
 };
 
 
-//log in
+//log in with 24 block
 export const login = async (email, password) => {
 	try {
+		// throws if email not found (your getUserByEmail already does that)
 		const user = await getUserByEmail(email);
-		if (comparePassword(password, user?.password)) {
+
+		const now = new Date();
+
+		// still locked?
+		if (user.blockedUntil && user.blockedUntil > now) {
+			const err = new Error(
+				`Account locked. Try again after ${user.blockedUntil.toISOString()}`
+			);
+			err.code = "ACCOUNT_LOCKED";
+			throw err;
+		}
+
+		// lock expired? reset counters
+		if (user.blockedUntil && user.blockedUntil <= now) {
+			user.blockedUntil = null;
+			user.loginAttempts = 0;
+			await user.save();
+		}
+
+		// check password
+		const ok = comparePassword(password, user?.password);
+		if (ok) {
+			// success -> reset any counters/lock
+			if (user.loginAttempts || user.blockedUntil) {
+				user.loginAttempts = 0;
+				user.blockedUntil = null;
+				await user.save();
+			}
 			return generateToken(user);
 		}
+
+		// wrong password -> increment attempts
+		user.loginAttempts = (user.loginAttempts || 0) + 1;
+
+		if (user.loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+			user.blockedUntil = new Date(Date.now() + LOCK_TIME_MS);
+			user.loginAttempts = 0; // reset after we lock
+			await user.save();
+
+			const err = new Error("Account locked for 24 hours due to multiple failed logins.");
+			err.code = "ACCOUNT_LOCKED";
+			throw err;
+		}
+
+		await user.save();
 		throw new Error("password incorrect");
 	} catch (error) {
+		if (error.code === "ACCOUNT_LOCKED") throw error;
 		throw new Error(error.message);
 	}
 };
@@ -57,6 +103,10 @@ export const updateUser = async (id, updates, { isAdminCaller }) => {
 	if (!isAdminCaller) {
 		delete updates.isAdmin;
 	}
+
+	// Do not allow tampering with lock fields via the API
+	delete updates.loginAttempts;
+	delete updates.blockedUntil;
 
 	// Hash password if provided
 	if (updates.password) {

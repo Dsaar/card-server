@@ -26,7 +26,10 @@ router.post("/login", async (req, res) => {
 		const token = await login(email, password);
 		res.send(token);
 	} catch (error) {
-		res.status(401).send("invalid email or password");
+		if (error.code === "ACCOUNT_LOCKED") {
+			return res.status(423).send(error.message); // 423 Locked
+		}
+		return res.status(401).send("invalid email or password");
 	}
 });
 

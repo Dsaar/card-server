@@ -16,6 +16,8 @@ const userSchema = new Schema({
 	address: Address,
 	isAdmin: { type: Boolean, default: false },
 	isBusiness: { type: Boolean, default: false },
+	loginAttempts: { type: Number, default: 0 },
+	blockedUntil: { type: Date, default: null },
 	createdAt: {
 		type: Date,
 		default: Date.now,
