@@ -5,6 +5,7 @@ import cors from 'cors';
 import { connectToDb } from './DB/dbService.js';
 import chalk from 'chalk';
 import dotenv from 'dotenv';
+import serverLogger from './middlewares/loggerService.js';
 dotenv.config();
 
 const app = express();
@@ -17,7 +18,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(logger);
+app.use(serverLogger);
 
 app.use(express.static("./public"));
 
