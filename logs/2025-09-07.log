@@ -5,3 +5,8 @@
 [2025/9/07 21:11:05] status=404 msg=User not found
 [2025/9/07 21:11:06] status=404 msg=User not found
 [2025/9/07 21:11:10] status=404 msg=User not found
+[2025/9/07 23:29:22] status=401 msg=Authentication Error: Please Login
+[2025/9/07 23:30:16] status=404 msg=User not found
+[2025/9/07 23:39:23] status=400 msg=user image must be a valid url
+[2025/9/07 23:39:47] status=400 msg=user image must be a valid url
+[2025/9/07 23:40:08] status=400 msg=user image must be a valid url
