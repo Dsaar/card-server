@@ -1,0 +1,9 @@
+[2025/9/30 11:37:16] status=500 msg=something went wrong with get all cards
+[2025/9/30 11:37:16] status=404 msg=User not found
+[2025/9/30 11:42:44] status=500 msg=something went wrong with get all cards
+[2025/9/30 11:43:14] status=404 msg=User not found
+[2025/9/30 11:45:58] status=404 msg=User not found
+[2025/9/30 11:45:58] status=404 msg=User not found
+[2025/9/30 11:46:00] status=404 msg=User not found
+[2025/9/30 11:46:00] status=404 msg=User not found
+[2025/9/30 11:46:06] status=404 msg=User not found

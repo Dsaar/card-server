@@ -13,7 +13,7 @@ const port = process.env.PORT || 3000;
 
 app.use(cors({
 
-	origin: ["http://127.0.0.1:5500", "http://localhost:5173", "https://buiscard-project.vercel.app"],
+	origin: ["http://127.0.0.1:5500", "http://localhost:5173", "https://buiscard-project.vercel.app","https://bcard-project.netlify.app"],
 
 }));
 
