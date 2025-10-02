@@ -3,3 +3,10 @@
 [2025/10/03 00:19:39] status=404 msg=Path not found
 [2025/10/03 00:20:14] status=404 msg=Path not found
 [2025/10/03 00:21:36] status=403 msg=Admins only
+[2025/10/03 00:29:01] status=400 msg=Email is already in use. Please choose another one.
+[2025/10/03 00:29:21] status=400 msg=Email is already in use. Please choose another one.
+[2025/10/03 00:36:09] status=401 msg=Authentication Error: Please Login
+[2025/10/03 00:37:15] status=404 msg=Path not found
+[2025/10/03 00:54:42] status=404 msg=Path not found
+[2025/10/03 00:55:32] status=401 msg=invalid email or password
+[2025/10/03 00:56:56] status=404 msg=Path not found
