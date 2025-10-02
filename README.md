@@ -78,7 +78,7 @@ npm install
 Create a `.env` file with:
 ```env
 PORT=3000
-LOCAL_DB=mongodb://127.0.0.1:27017/cards
+LOCAL_DB=mongodb://127.0.0.1:27017/business_card_app
 ATLAS_DB=<your-atlas-uri>
 JWT_SECRET=<your-secret-key>
 ```
