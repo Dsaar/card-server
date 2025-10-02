@@ -1,0 +1,5 @@
+[2025/10/03 00:13:59] status=400 msg=something went wrong with card edit
+[2025/10/03 00:19:18] status=404 msg=Card not found
+[2025/10/03 00:19:39] status=404 msg=Path not found
+[2025/10/03 00:20:14] status=404 msg=Path not found
+[2025/10/03 00:21:36] status=403 msg=Admins only

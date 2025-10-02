@@ -1,0 +1,30 @@
+[2025/10/02 21:51:54] status=400 msg=something went wrong with card creation
+[2025/10/02 21:52:04] status=400 msg=something went wrong with card creation
+[2025/10/02 21:53:15] status=400 msg=something went wrong with card creation
+[2025/10/02 23:00:37] status=403 msg=Admins only
+[2025/10/02 23:02:55] status=403 msg=Admins only
+[2025/10/02 23:05:56] status=403 msg=Admins only
+[2025/10/02 23:07:38] status=403 msg=Admins only
+[2025/10/02 23:09:31] status=403 msg=Admins only
+[2025/10/02 23:10:12] status=403 msg=Admins only
+[2025/10/02 23:18:46] status=403 msg=Admins only
+[2025/10/02 23:18:53] status=403 msg=Admins only
+[2025/10/02 23:19:16] status=403 msg=Admins only
+[2025/10/02 23:30:26] status=403 msg=Admins only
+[2025/10/02 23:38:00] status=400 msg="isBusiness" is required
+[2025/10/02 23:38:11] status=400 msg="isBusiness" is required
+[2025/10/02 23:42:18] status=401 msg=Authentication Error: Please Login
+[2025/10/02 23:43:03] status=403 msg=Admins only
+[2025/10/02 23:43:40] status=400 msg=Invalid user id
+[2025/10/02 23:44:25] status=400 msg=Invalid user id
+[2025/10/02 23:44:32] status=400 msg=Invalid user id
+[2025/10/02 23:44:37] status=404 msg=Path not found
+[2025/10/02 23:45:41] status=403 msg=Forbidden
+[2025/10/02 23:45:51] status=404 msg=Path not found
+[2025/10/02 23:45:57] status=404 msg=Path not found
+[2025/10/02 23:46:09] status=404 msg=Path not found
+[2025/10/02 23:46:39] status=404 msg=Path not found
+[2025/10/02 23:50:27] status=400 msg=Invalid user id
+[2025/10/02 23:50:43] status=403 msg=Forbidden
+[2025/10/02 23:56:22] status=400 msg=something went wrong with card edit
+[2025/10/02 23:57:13] status=400 msg=something went wrong with card edit

@@ -53,29 +53,39 @@ router.put("/:id", auth, async (req, res) => {
 	try {
 		const { id } = req.params;
 
-		// only self or admin can edit
-		if (req.user._id !== id && !req.user.isAdmin) {
-			return res.status(403).send("Forbidden");
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).send({ error: "Invalid user id" });
+		}
+
+		// Only self or admin can edit
+		if (String(req.user._id) !== String(id) && !req.user.isAdmin) {
+			return res.status(403).send({ error: "Forbidden" });
 		}
 
 		const updated = await updateUser(id, req.body, { isAdminCaller: !!req.user.isAdmin });
-		if (!updated) return res.status(404).send("User not found");
+		if (!updated) return res.status(404).send({ error: "User not found" });
 		res.send(updated);
 	} catch (error) {
-		res.status(400).send(error.message || "Failed to update user");
+		res.status(400).send({ error: error.message || "Failed to update user" });
 	}
 });
 
 /** REVOKE BUSINESS (admin only) */                     
-router.patch("/:id", auth, requireAdmin, async (req, res) => {
+router.patch("/:id", auth, async (req, res) => {
 	const { id } = req.params;
+
 	if (!mongoose.Types.ObjectId.isValid(id)) {
-		return res.status(400).send("Invalid user id");
+		return res.status(400).send({ error: "Invalid user id" });
+	}
+
+	// Only self or admin can toggle
+	if (String(req.user._id) !== String(id) && !req.user.isAdmin) {
+		return res.status(403).send({ error: "Forbidden" });
 	}
 
 	// Load current to know what to toggle from
 	const current = await getUserByIdFromDb(id);
-	if (!current) return res.status(404).send("User not found");
+	if (!current) return res.status(404).send({ error: "User not found" });
 
 	// Determine target value
 	const hasExplicit =
@@ -89,9 +99,9 @@ router.patch("/:id", auth, requireAdmin, async (req, res) => {
 		const updated = await updateUser(
 			id,
 			{ isBusiness: nextIsBusiness },
-			{ isAdminCaller: true } // allow admin to change this field
+			{ isAdminCaller: !!req.user.isAdmin } // allow admin, and allow self to change own isBusiness
 		);
-		if (!updated) return res.status(404).send("User not found");
+		if (!updated) return res.status(404).send({ error: "User not found" });
 
 		res.send({
 			message: nextIsBusiness ? "Business status granted" : "Business status revoked",
@@ -99,29 +109,50 @@ router.patch("/:id", auth, requireAdmin, async (req, res) => {
 			isBusiness: updated.isBusiness,
 		});
 	} catch (e) {
-		res.status(400).send(e.message || "Failed to update user");
+		res.status(400).send({ error: e.message || "Failed to update user" });
 	}
 });
 
+
 /** DELETE USER (admin only) */                          
-router.delete("/:id", auth, requireAdmin, async (req, res) => {
-	const { id } = req.params;
-	if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send("Invalid user id");
-	const existing = await getUserByIdFromDb(id);
-	if (!existing) return res.status(404).send("User not found");
-	await deleteUserInDb(id);
-	res.send({ message: "User deleted", id });
+router.delete("/:id", auth, async (req, res) => {
+	try {
+		const { id } = req.params;
+
+		if (!mongoose.Types.ObjectId.isValid(id)) {
+			return res.status(400).send({ error: "Invalid user id" });
+		}
+
+		// Allow self-delete or admin
+		if (String(req.user._id) !== String(id) && !req.user.isAdmin) {
+			return res.status(403).send({ error: "Forbidden – only self or admin can delete this user" });
+		}
+
+		const deleted = await deleteUserInDb(id);
+		if (!deleted) {
+			return res.status(404).send({ error: "User not found" });
+		}
+
+		res.send({ message: "User deleted successfully", user: deleted });
+	} catch (error) {
+		res.status(500).send({ error: error.message });
+	}
 });
 
 // GET BY ID (self or admin)
 router.get("/:id", auth, async (req, res) => {
 	const { id } = req.params;
-	if (req.user._id !== id && !req.user.isAdmin) {
-		return res.status(403).send("Forbidden");
+
+	if (!mongoose.Types.ObjectId.isValid(id)) {
+		return res.status(400).send({ error: "Invalid user id" });
 	}
+
+	if (String(req.user._id) !== String(id) && !req.user.isAdmin) {
+		return res.status(403).send({ error: "Forbidden" });
+	}
+
 	const user = await getUserByIdFromDb(id);
-	if (!user) return res.status(404).send("User not found");
+	if (!user) return res.status(404).send({ error: "User not found" });
 	res.send(user);
 });
-
 export default router
