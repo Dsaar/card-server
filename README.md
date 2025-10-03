@@ -36,7 +36,7 @@ A Node.js/Express backend for managing **business cards** and **users**, built w
 ### Infrastructure
 - **Authentication**: JWT (`x-auth-token` header).
 - **Authorization**: Middleware (`auth`, `requireAdmin`).
-- **Seeding**: Users + Cards via `seed.js`.
+- **Seeding**: Users + Cards via `seed.js` (supports both local and production DB).
 - **Configurable** via [`config`](https://www.npmjs.com/package/config) (development/production JSON).
 - **Logging**:
   - Color-coded console logs (morgan + chalk).
@@ -58,6 +58,7 @@ A Node.js/Express backend for managing **business cards** and **users**, built w
 - morgan + chalk for logging
 - config for environment settings
 - dotenv for `.env` management
+- cross-env for cross-platform env handling
 
 ---
 
@@ -87,19 +88,44 @@ JWT_SECRET=<your-secret-key>
 ```bash
 npm run dev
 ```
-This starts the server with nodemon and `NODE_ENV=development`.
+Starts the server with nodemon and `NODE_ENV=development`.
 
 ### 5. Run in production
 ```bash
 npm start
 ```
-This starts with `NODE_ENV=production`.
+Starts with `NODE_ENV=production`.
 
-### 6. Seed database (development only)
+---
+
+## 🌱 Database Seeding
+
+The seed script inserts **3 users** (regular, business, admin) and **3 sample cards**.
+
+### Seed Local (Development)
+Connects to `LOCAL_DB` (from `.env`) with `NODE_ENV=development`:
+
 ```bash
 npm run seed
+# or explicitly
+npm run seed:local
 ```
-Seeds default **users** (regular, business, admin) and **sample cards**.
+
+### Seed Production / Atlas (Explicit Opt-In)
+Connects to `ATLAS_DB` (from `.env`) with `NODE_ENV=production`.  
+⚠️ This is protected — you must explicitly allow it:
+
+```bash
+npm run seed:prod
+```
+
+This runs with:
+```bash
+cross-env NODE_ENV=production ALLOW_SEED_ANYWAY=true node ./seed/seed.js
+```
+
+> ⚠️ Be very careful: this writes to your **live Atlas DB**.  
+> Double-check your `ATLAS_DB` string before running.
 
 ---
 
@@ -113,8 +139,8 @@ Seeds default **users** (regular, business, admin) and **sample cards**.
 ### Users
 - `GET /users` → List all (admin)
 - `PUT /users/:id` → Update (self/admin)
-- `PATCH /users/:id` → Toggle `isBusiness` (admin)
-- `DELETE /users/:id` → Delete user (admin)
+- `PATCH /users/:id` → Toggle `isBusiness` (self/admin)
+- `DELETE /users/:id` → Delete user (self/admin)
 - `GET /users/:id` → Get by id (self/admin)
 
 ### Cards
@@ -125,13 +151,14 @@ Seeds default **users** (regular, business, admin) and **sample cards**.
 - `PATCH /cards/:id/like` → Like/unlike
 - `PATCH /cards/:id/biz-number` → Reset biz number (admin)
 - `PUT /cards/:id` → Update (owner/admin)
+- `PATCH /cards/:id` → Partial update (owner/admin)
 - `DELETE /cards/:id` → Delete (owner/admin)
 - `GET /cards/:id` → Get card by ID
 
 ---
 
 ## Testing (manual)
-Use a tool like Postman or Insomnia.  
+Use Postman or Insomnia.  
 Include `x-auth-token` header with your JWT for protected routes.
 
 ---
@@ -142,7 +169,7 @@ Include `x-auth-token` header with your JWT for protected routes.
 ├── auth/              # JWT provider, auth & admin middleware
 ├── cards/             # Models, controllers, services, validation
 ├── config/            # default/production/development JSON
-├── db/                # dbService (connects mongoose)
+├── DB/                # dbService (connects mongoose)
 ├── helpers/           # Address, Name, Image sub-schemas, validators
 ├── middlewares/       # logger, loggerService, simpleLogger
 ├── public/            # static assets
@@ -160,3 +187,24 @@ Include `x-auth-token` header with your JWT for protected routes.
 - Passwords are hashed before saving.
 - JWT secret must be set via `JWT_SECRET` in `.env`.
 - Account lockout prevents brute force (3 attempts → lock for 24h).
+- Seeding can target **local** or **production (Atlas)** depending on the script used.  
+
+---
+
+## 🔑 Seeded Login Details
+
+After running `npm run seed` or `npm run seed:prod`, you’ll have 3 users:
+
+### Admin User
+- **Email:** `admin@cards.com`
+- **Password:** `Admin123!`
+
+### Business User
+- **Email:** `biz@cards.com`
+- **Password:** `Biz123!`
+
+### Regular User
+- **Email:** `user@cards.com`
+- **Password:** `User123!`
+
+> You can use these accounts to test login, admin-only routes, business-only routes (like creating cards), and regular user restrictions.
